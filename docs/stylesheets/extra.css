@@ -1,0 +1,21 @@
+/* 自訂 admonition：tet-tw 自研加值標籤（紫色，區別於原廠標準內容） */
+:root {
+  --tetplus-color: #8250df;
+}
+
+.md-typeset .admonition.tetplus,
+.md-typeset details.tetplus {
+  border-color: var(--tetplus-color);
+}
+
+.md-typeset .tetplus > .admonition-title,
+.md-typeset .tetplus > summary {
+  background-color: rgba(130, 80, 223, 0.10);
+}
+
+.md-typeset .tetplus > .admonition-title::before,
+.md-typeset .tetplus > summary::before {
+  background-color: var(--tetplus-color);
+  -webkit-mask-image: var(--md-admonition-icon--note);
+          mask-image: var(--md-admonition-icon--note);
+}
