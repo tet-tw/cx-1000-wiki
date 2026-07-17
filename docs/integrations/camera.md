@@ -167,6 +167,70 @@ IP-A1 接收端的預設優先權（可自訂順序）：
 
 ---
 
+## 實測 SOP（建議測試順序）
+
+實地測試建議「由淺入深、逐段確認」——每一段都能獨立驗證，出問題容易定位。
+
+### STEP 0 — 前置
+1. **重配攝影機 IP**：N-C6 出廠預設 IP 常與 CX-SM1000 的 `.1` 衝突，先改到現場網段相容、不撞任何設備的位址。
+2. 確認攝影機與接收端（中控軟體／IP-A1／CX）在**同一網段**、可互通（ping 得到）。
+3. 若走純網路對 IP-A1：確認 IP-A1 韌體 **3.6.0 以上**。
+
+### STEP 1 — 先確認攝影機「偵測」會動
+1. 攝影機網頁 → 偵測設定 → 開 **動体偵測**，畫好偵測區、調感度與反向遮罩。
+2. 在鏡頭前製造動作，確認偵測有觸發（事件記錄可看）。
+3. ⚠ 記得：這是動体偵測、**不分人**；要人物／滯留辨識得另裝 AI 擴充 App。
+
+### STEP 2 — 單獨測「HTTP 通知」有沒有送出（先不接喇叭）
+先用一個簡單接收端把攝影機通知「收下來看」，確認格式對、有送出：
+
+1. 攝影機網頁 → 通知先設定 → HTTP(S) 通知：填**測試接收端** URL、Method（建議 POST + JSON）、（如需）帳密、body。
+2. 攝影機網頁 → 程式事件：事件 = 動体偵測 → 動作 = 剛設的 HTTP 通知。
+3. 按程式事件的 **「測試執行」** 鍵 —— 不必真的觸發偵測就會發一次。
+4. 在接收端確認收到、內容正確。
+
+    臨時測試接收端（在測試 PC 上跑，會把收到的請求印出來；攝影機 URL 指向 `http://<PC_IP>:8088/trigger`）：
+
+    ```python
+    # test_listener.py   →   python test_listener.py
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    class H(BaseHTTPRequestHandler):
+        def _log(self):
+            n = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(n).decode('utf-8', 'ignore') if n else ''
+            print(self.command, self.path, '| body:', body)
+            self.send_response(200); self.end_headers()
+        do_GET = do_POST = _log
+    HTTPServer(('0.0.0.0', 8088), H).serve_forever()
+    ```
+
+### STEP 3（路線 B）— HTTP → 中控軟體 → IP-A1
+1. 把攝影機 HTTP 通知改指向**你的中控軟體 webhook**。
+2. 中控收到後，用 **multicast 推流**（免申請）或既有機制驅動 IP-A1 播放。
+3. IP-A1 端：設好接收頻道（IP／埠／codec，建議 G.722）、Pattern、優先權。
+4. 觸發偵測 → 確認目標 IP-A1 喇叭播出。
+
+!!! tip
+    直接讓攝影機打 IP-A1 的 Remote API 也行，但**指令格式需向 TOA 書面申請**、且 Digest 相容性未證實。用中控軟體當中介最穩，也迴避 Digest 疑點。
+
+### STEP 4（路線 A）— 接點 → CX → 廣播
+1. 攝影機加裝 **N-OP600CA** 選配線（半球機身才有接點端子）。
+2. 攝影機接點輸出（開集極）→ **隔離繼電器** → CX-AF1062 控制輸入（無電壓乾接點）。
+    - ⚠ 開集極有極性、參考攝影機 GND、無隔離 → **中間務必加隔離繼電器**，把它還原成乾接點再進 CX。
+3. 攝影機程式事件：動作 = **接點輸出 ON**（模式 Pulse，1～60 秒可設）。
+4. CX 設定軟體 → `Event activation → Control input`：把該 AF1062 控制輸入綁到要的廣播（一般廣播樣式，或緊急樣式）。
+5. 觸發偵測 → 確認 CX 啟動廣播、送到目標喇叭。
+
+### STEP 5 — 端到端 + 優先權
+1. 完整走一次：製造事件 → 廣播播出。
+2. 若同一顆 IP-A1 同時是 CX 目的地，測「攝影機警告」與「CX 廣播」**撞在一起**時誰蓋誰，依需要調 IP-A1 優先權表。
+3. 記錄延遲與誤觸率，回頭調偵測感度／遮罩。
+
+!!! warning "以現場實測為準"
+    跨系統（攝影機／CX／IP-A1）的實際時序與壓制關係，務必以現場／台架實測確認，別只憑規格表推論。
+
+---
+
 ## 環境與限制檢查表
 
 | 項目 | 要點 |
