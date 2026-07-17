@@ -1,0 +1,73 @@
+site_name: CX-1000 技術 Wiki
+site_description: TOA CX-1000 系統規格・設定 SOP・整合方案
+site_url: https://tet-tw.github.io/cx-1000-wiki/
+copyright: © tet-tw — 本站內容為本公司整理之技術資料，非 TOA 官方文件
+
+theme:
+  name: material
+  language: zh-TW
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: 切換深色模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: 切換淺色模式
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+
+repo_url: https://github.com/tet-tw/cx-1000-wiki
+repo_name: tet-tw/cx-1000-wiki
+edit_uri: edit/main/docs/
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - toc:
+      permalink: true
+
+nav:
+  - 首頁: index.md
+  - 系統介紹:
+      - 系統架構與概念: system/overview.md
+      - 設備與規格: system/devices.md
+      - 廣播與優先權: system/priority.md
+  - 設定指南:
+      - 快速上手 / 初始化: guides/quickstart.md
+      - 緊急廣播設定: guides/emergency.md
+  - 整合方案:
+      - 總覽: integrations/index.md
+      - 攝影機事件觸發: integrations/camera.md
+      - 外部緊急系統（3 接點）: integrations/external-emergency.md
+      - 外部語音 / 校園廣播橋接: integrations/audio-bridge.md
+      - WebAPI: integrations/webapi.md
+  - 常見問題: faq.md
