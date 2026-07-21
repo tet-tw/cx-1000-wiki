@@ -69,7 +69,7 @@ CX-1000 的「緊急模式」是全系統最高優先的強制廣播機制，一
 要讓「警告 →（延時或手動）→ 避難」自動接續，靠的是**緊急序列（Emergency sequence）**。
 
 - 一條序列最多 **3 個 phase（階段）**，每個 phase 綁一個音源與逾時設定。
-- Phase 的音源**只能選 Warning／Evacuation 用途**的內容；**All-clear 不放在序列裡**（見第六節）。
+- Phase 的音源可選 **No sound（無音，預設）** 或 **Warning／Evacuation 用途**的內容；**All-clear 不放在序列裡**（見第六節）。
 - 讓 Phase 1（Warning）循環播放，並把 **Time-out 設為 ON、時長設一個夠長的安全值**（例如 10–30 分）；如此一來 Phase 2（Evacuation）才會出現，且能靠「避難」接點手動提前跳階；接點若一直沒來，超過安全時間才自動前進。
 
 **緊急訊息樣式（pattern）** = 序列 ＋ 廣播目的地 ＋（選配）連動的控制輸出群組。實際觸發與廣播的就是這個 pattern。
@@ -78,6 +78,18 @@ CX-1000 的「緊急模式」是全系統最高優先的強制廣播機制，一
     - 序列：`Broadcast → Emergency sequence`
     - 樣式：`Broadcast → Emergency message broadcast pattern`
     - 音源用途：`Audio file → Audio content`（Usage 選 Warning／Evacuation／All-clear，這三項要 Emergency mode 開啟後才出現）
+
+### 讓 CX 靜音（無音緊急）
+
+序列 Phase 的音源設為 **No sound（無音）**，就能做出「**進入緊急模式但不出聲**」——常用於「外部系統接管廣播時，讓 CX 鎖住自己並保持安靜」。
+
+- 建一條序列，**Phase 1 音源 = No sound、Time-out = OFF**（單一階段，維持到解除）。
+- 用它建緊急樣式，目的地選要靜音的區。
+- 事件綁定（AF1062 或 **CC1016** 控制輸入皆可）：`Emergency message broadcast pattern start`。
+- 觸發後 CX **進入緊急模式（鎖住 BGM／一般廣播）＋ 內容無音** → 等於用緊急模式讓 CX 靜下來；**需 Emergency all-clear 才解除**。
+
+!!! tip "只想「壓著才靜、放開就恢復」？改用輸出音量衰減"
+    若不想讓系統進入緊急模式、只要單純把輸出靜音，改用 `Event activation → Control input →` **Output volume attenuation (Level)**，把（2）Output volume 設 **`–∞`**（全衰減＝靜音）、目的地選要靜音的輸出。接點壓著就靜、放開即恢復，且**連緊急廣播也會被一併壓下**。
 
 ---
 
@@ -148,6 +160,7 @@ AF1062 控制輸入是**無電壓 make（乾接點）**：開放時約 24V DC、
 
 - **緊急模式 = 全系統最高優先的強制廣播**，會鎖住 BGM 與一般廣播，且不受廣播逾時切斷。
 - **三種類型**：站台即時麥克風（41–60）、內建預錄訊息（61–80）、預錄序列樣式（61–80，可接點觸發）。外部整合走「序列樣式＋接點」。
+- **可做「靜音緊急」**：序列 Phase 音源設 `No sound` ＝ 進緊急模式但不出聲（需 all-clear 解除）；或用 `Output volume attenuation (Level)` 設 `–∞` 做「壓著才靜、放開恢復」的純靜音。
 - **外部線路音源進不了緊急帶**，最高只到一般 121；緊急語音要**自己錄 WAV**（16-bit／Mono／16·32·48 kHz、檔名 5–15 字元、開頭墊靜音）。
 - **三接點對應**：警告 → CI-1（pattern start）、避難 → CI-2（phase transition）、解除 → CI-3（all-clear）；外部須為**無電壓乾接點**，閉合 ≥ 0.2 秒。
 - **一定先開 Emergency mode 再做其他設定**；接點只能送乾接點、半導體輸出要對極性。
