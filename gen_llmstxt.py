@@ -23,6 +23,7 @@ ORDER = [
     "integrations/external-emergency.md",
     "integrations/audio-bridge.md",
     "integrations/sip.md",
+    "troubleshooting.md",
     "faq.md",
 ]
 

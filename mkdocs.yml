@@ -76,4 +76,5 @@ nav:
       - 外部緊急系統（3 接點）: integrations/external-emergency.md
       - 外部語音 / 校園廣播橋接: integrations/audio-bridge.md
       - SIP 電話整合: integrations/sip.md
+  - 故障排除: troubleshooting.md
   - 常見問題: faq.md
