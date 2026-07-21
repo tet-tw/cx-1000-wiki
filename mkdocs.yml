@@ -67,6 +67,7 @@ nav:
       - 系統架構與概念: system/overview.md
       - 設備與規格: system/devices.md
       - 廣播與優先權: system/priority.md
+      - 冗餘與可用性: system/redundancy.md
   - 設定指南:
       - 快速上手 / 初始化: guides/quickstart.md
       - 緊急廣播設定: guides/emergency.md

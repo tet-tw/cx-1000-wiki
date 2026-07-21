@@ -16,6 +16,7 @@ ORDER = [
     "system/overview.md",
     "system/devices.md",
     "system/priority.md",
+    "system/redundancy.md",
     "guides/quickstart.md",
     "guides/emergency.md",
     "integrations/index.md",
